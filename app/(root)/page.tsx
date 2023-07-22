@@ -1,12 +1,21 @@
-import { UserButton } from "@clerk/nextjs";
-import { Button } from "@/components/ui/button";
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { Modal } from "@/components/ui/modal";
+import { useStoreModal } from "@/hooks/use-store-modal";
+import { useEffect } from "react";
+
+export default function RootPage() {
+  const storeModal = useStoreModal();
+
+  useEffect(() => {
+    if (!storeModal.isOpen) {
+      storeModal.onOpen();
+    }
+  }, [storeModal]);
+  
   return (
-    <div className="flex items-center justify-center h-screen w-screen">
-      <span className="font-bold text-6xl">Hello Admin</span>
-      <UserButton afterSignOutUrl="/" />
+    <div className="">
+      Root page
     </div>
   );
 }
