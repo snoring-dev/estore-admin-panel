@@ -13,9 +13,5 @@ export default function RootPage() {
     }
   }, [storeModal]);
   
-  return (
-    <div className="">
-      Root page
-    </div>
-  );
+  return null;
 }
