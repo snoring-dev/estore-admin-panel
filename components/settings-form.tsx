@@ -18,6 +18,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { toast } from "react-hot-toast";
+import axios from "axios";
+import { useParams, useRouter } from "next/navigation";
+import AlertModal from "./modals/alert-modal";
 
 interface Props {
   initialData: Store;
@@ -30,6 +34,8 @@ const formSchema = z.object({
 type SettingsFormValues = z.infer<typeof formSchema>;
 
 function SettingsForm({ initialData }: Props) {
+  const params = useParams();
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const form = useForm<SettingsFormValues>({
@@ -38,14 +44,51 @@ function SettingsForm({ initialData }: Props) {
   });
 
   const onSubmit = async (data: SettingsFormValues) => {
-    console.log(data);
+    try {
+      setIsLoading(true);
+      await axios.patch(`/api/stores/${params.storeId}`, data);
+      router.refresh();
+      toast.success("Store had been updated");
+    } catch (e) {
+      toast.error("Something went wrong");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const onDelete = async () => {
+    try {
+      setIsLoading(true);
+      await axios.delete(`/api/stores/${params.storeId}`);
+      toast.success("The store has been removed");
+      router.refresh();
+      router.push('/');
+    } catch (e) {
+      toast.error(
+        "Make sure you removed all related products and categories first."
+      );
+    } finally {
+      setIsLoading(false);
+      setIsOpen(false);
+    }
   };
 
   return (
     <>
+      <AlertModal
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        loading={isLoading}
+        onConfirm={onDelete}
+      />
       <div className="flex items-center justify-between">
         <Heading title="Settings" description="Manage store preferences" />
-        <Button variant="destructive" size="icon" onClick={() => {}}>
+        <Button
+          disabled={isLoading}
+          variant="destructive"
+          size="icon"
+          onClick={() => setIsOpen(true)}
+        >
           <Trash className="h-4 w-4" />
         </Button>
       </div>
