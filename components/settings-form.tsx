@@ -22,6 +22,8 @@ import { toast } from "react-hot-toast";
 import axios from "axios";
 import { useParams, useRouter } from "next/navigation";
 import AlertModal from "./modals/alert-modal";
+import ApiAlert from "@/components/ui/api-alert";
+import { useOrigin } from "@/hooks/use-origin";
 
 interface Props {
   initialData: Store;
@@ -36,6 +38,7 @@ type SettingsFormValues = z.infer<typeof formSchema>;
 function SettingsForm({ initialData }: Props) {
   const params = useParams();
   const router = useRouter();
+  const origin = useOrigin();
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const form = useForm<SettingsFormValues>({
@@ -62,7 +65,7 @@ function SettingsForm({ initialData }: Props) {
       await axios.delete(`/api/stores/${params.storeId}`);
       toast.success("The store has been removed");
       router.refresh();
-      router.push('/');
+      router.push("/");
     } catch (e) {
       toast.error(
         "Make sure you removed all related products and categories first."
@@ -122,6 +125,12 @@ function SettingsForm({ initialData }: Props) {
           </Button>
         </form>
       </Form>
+      <Separator />
+      <ApiAlert
+        title="Store API"
+        description={`${origin}/api/${params.storeId}`}
+        variant="public"
+      />
     </>
   );
 }
