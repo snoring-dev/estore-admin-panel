@@ -73,6 +73,7 @@ function BillboardForm({ initialData }: Props) {
 
       router.refresh();
       toast.success(labels.toastMessage);
+      router.push(route);
     } catch (e) {
       toast.error("Something went wrong");
     } finally {
@@ -88,7 +89,7 @@ function BillboardForm({ initialData }: Props) {
       );
       toast.success("Billboard removed");
       router.refresh();
-      router.push("/");
+      router.push(`/api/${params.storeId}/billboards`);
     } catch (e) {
       toast.error("Make sure you removed all related categories first.");
     } finally {
