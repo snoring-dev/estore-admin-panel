@@ -5,6 +5,8 @@ import { useState } from "react";
 import * as z from "zod";
 import { Billboard } from "@prisma/client";
 import { Trash } from "lucide-react";
+import { toast } from "react-hot-toast";
+import axios from "axios";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Heading } from "@/components/ui/heading";
 import { Button } from "@/components/ui/button";
@@ -18,13 +20,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { toast } from "react-hot-toast";
-import axios from "axios";
 import { useParams, useRouter } from "next/navigation";
-import AlertModal from "./modals/alert-modal";
-import ApiAlert from "@/components/ui/api-alert";
+import AlertModal from "@/components/modals/alert-modal";
 import { useOrigin } from "@/hooks/use-origin";
-import ImageUploader from "./ui/image-uploader";
+import ImageUploader from "@/components/ui/image-uploader";
 
 interface Props {
   initialData: Billboard | null;
@@ -73,7 +72,7 @@ function BillboardForm({ initialData }: Props) {
 
       router.refresh();
       toast.success(labels.toastMessage);
-      router.push(route);
+      router.push(route.replace('/api', ''));
     } catch (e) {
       toast.error("Something went wrong");
     } finally {
@@ -89,7 +88,7 @@ function BillboardForm({ initialData }: Props) {
       );
       toast.success("Billboard removed");
       router.refresh();
-      router.push(`/api/${params.storeId}/billboards`);
+      router.push(`/${params.storeId}/billboards`);
     } catch (e) {
       toast.error("Make sure you removed all related categories first.");
     } finally {

@@ -3,7 +3,7 @@ import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 
 export async function GET(
-  req: Request,
+  _req: Request,
   { params }: { params: { billboardId: string } }
 ) {
   try {
@@ -87,12 +87,11 @@ export async function PATCH(
 }
 
 export async function DELETE(
-  req: Request,
+  _req: Request,
   { params }: { params: { billboardId: string; storeId: string } }
 ) {
   try {
     const { userId } = auth();
-    const body = await req.json();
 
     if (!userId) {
       return new NextResponse("Unauthenticated", { status: 401 });
@@ -102,21 +101,6 @@ export async function DELETE(
       return new NextResponse("StoreId & BillboardId are required", {
         status: 401,
       });
-    }
-
-    if (!body.label) {
-      return new NextResponse("Missing field 'label' for billboard creation", {
-        status: 400,
-      });
-    }
-
-    if (!body.imageUrl) {
-      return new NextResponse(
-        "Missing field 'imageUrl' for billboard creation",
-        {
-          status: 400,
-        }
-      );
     }
 
     const storeByUserId = await prismadb.store.findFirst({
@@ -133,7 +117,6 @@ export async function DELETE(
     const billboard = await prismadb.billboard.deleteMany({
       where: {
         id: params.billboardId,
-        storeId: params.storeId,
       },
     });
 
