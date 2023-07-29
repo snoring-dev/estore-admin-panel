@@ -8,6 +8,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { BillboardColumn, columns } from "./columns";
 import { DataTable } from "@/components/ui/data-table";
+import ApiList from "@/components/api-list";
 
 interface Props {
   data: BillboardColumn[];
@@ -42,6 +43,9 @@ function BillboardClient({ data = [] }: Props) {
       </div>
       <Separator />
       <DataTable columns={columns} data={data} searchBy="label"/>
+      <Heading title="API" description="Api calls for Billboards" />
+      <Separator />
+      <ApiList entityIdName="billboardId" entityName="billboards" />
     </>
   );
 }
