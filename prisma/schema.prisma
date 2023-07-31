@@ -20,6 +20,7 @@ model Store {
   sizes      Size[]      @relation("StoreToSize")
   colors     Color[]     @relation("StoreToColor")
   products   Product[]   @relation("StoreToProduct")
+  orders     Order[]     @relation("StoreToOrder")
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
 }
@@ -79,22 +80,23 @@ model Color {
 }
 
 model Product {
-  id         String   @id @default(uuid())
+  id         String      @id @default(uuid())
   storeId    String
   categoryId String
   sizeId     String
   colorId    String
   name       String
   price      Decimal
-  isFeatured Boolean  @default(false)
-  isArchived Boolean  @default(false)
-  size       Size     @relation(fields: [sizeId], references: [id])
-  color      Color    @relation(fields: [colorId], references: [id])
-  store      Store    @relation("StoreToProduct", fields: [storeId], references: [id])
-  category   Category @relation("CategoryToProduct", fields: [categoryId], references: [id])
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  isFeatured Boolean     @default(false)
+  isArchived Boolean     @default(false)
+  size       Size        @relation(fields: [sizeId], references: [id])
+  color      Color       @relation(fields: [colorId], references: [id])
+  store      Store       @relation("StoreToProduct", fields: [storeId], references: [id])
+  category   Category    @relation("CategoryToProduct", fields: [categoryId], references: [id])
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
   images     Image[]
+  orderItems OrderItem[]
 
   @@index([storeId])
   @@index([categoryId])
@@ -108,5 +110,30 @@ model Image {
   productId String
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
+  @@index([productId])
+}
+
+model Order {
+  id         String      @id @default(uuid())
+  storeId    String
+  store      Store       @relation("StoreToOrder", fields: [storeId], references: [id])
+  orderItems OrderItem[]
+  isPaid     Boolean     @default(false)
+  phone      String      @default("")
+  address    String      @default("")
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  @@index([storeId])
+}
+
+model OrderItem {
+  id        String  @id @default(uuid())
+  orderId   String
+  productId String
+  order     Order   @relation(fields: [orderId], references: [id])
+  product   Product @relation(fields: [productId], references: [id])
+
+  @@index([orderId])
   @@index([productId])
 }
