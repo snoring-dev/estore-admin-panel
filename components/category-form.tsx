@@ -54,7 +54,7 @@ function CategoryForm({ initialData, billboards = [] }: Props) {
     title: initialData ? "Edit category" : "Create category",
     description: initialData
       ? "Edit an existing category"
-      : "Create a band new category",
+      : "Create a brand new category",
     toastMessage: initialData
       ? "Your category has been updated"
       : "A new Category has been created successfully",

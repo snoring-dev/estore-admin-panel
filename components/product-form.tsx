@@ -67,7 +67,7 @@ function ProductForm({ initialData, categories, sizes, colors }: Props) {
     title: initialData ? "Edit product" : "Create product",
     description: initialData
       ? "Edit an existing product"
-      : "Create a band new product",
+      : "Create a brand new product",
     toastMessage: initialData
       ? "Your product has been updated"
       : "A new Product has been created successfully",
@@ -159,12 +159,12 @@ function ProductForm({ initialData, categories, sizes, colors }: Props) {
             name="images"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Background Image</FormLabel>
+                <FormLabel>Product Images</FormLabel>
                 <FormControl>
                   <ImageUploader
                     value={field.value.map((img) => img.url)}
                     disabled={isLoading}
-                    onChange={(url) => field.onChange([field.value, { url }])}
+                    onChange={(url) => field.onChange([...field.value, { url }])}
                     onRemove={(url) =>
                       field.onChange([
                         ...field.value.filter((img) => img.url !== url),

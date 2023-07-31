@@ -18,30 +18,36 @@ function ImageUploader({ value, disabled, onRemove, onChange }: Props) {
   };
 
   return (
-    <div className="mb-4 flex flex-col items-start gap-4">
-      {value.map((url, index) => (
-        <div
-          key={index}
-          className="relative w-[200px] h-[200px] rounded-md overflow-hidden"
-        >
-          <div className="absolute z-10 top-2 right-2">
-            <Button
-              type="button"
-              size="icon"
-              variant="destructive"
-              onClick={() => onRemove(url)}
-            >
-              <Trash className="w-4 h-4" />
-            </Button>
-          </div>
-          <Image
-            fill
-            className="object-cover"
-            alt="billboard-image"
-            src={url}
-          />
-        </div>
-      ))}
+    <div className="flex flex-col items-start">
+      <div className="mb-4 flex flex-row items-start gap-4">
+        {value.map((url, index) => {
+          if (url) {
+            return (
+              <div
+                key={index}
+                className="relative w-[200px] h-[200px] rounded-md overflow-hidden"
+              >
+                <div className="absolute z-10 top-2 right-2">
+                  <Button
+                    type="button"
+                    size="icon"
+                    variant="destructive"
+                    onClick={() => onRemove(url)}
+                  >
+                    <Trash className="w-4 h-4" />
+                  </Button>
+                </div>
+                <Image
+                  fill
+                  className="object-cover"
+                  alt="billboard-image"
+                  src={url}
+                />
+              </div>
+            );
+          }
+        })}
+      </div>
       <CldUploadWidget onUpload={onUpload} uploadPreset="yyvm4cmk">
         {({ open }) => {
           return (

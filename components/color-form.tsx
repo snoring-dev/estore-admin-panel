@@ -44,7 +44,7 @@ function ColorForm({ initialData }: Props) {
     title: initialData ? "Edit color" : "Create color",
     description: initialData
       ? "Edit an existing color"
-      : "Create a band new color",
+      : "Create a brand new color",
     toastMessage: initialData
       ? "Your color has been updated"
       : "A new Color has been created successfully",

@@ -44,7 +44,7 @@ function SizeForm({ initialData }: Props) {
     title: initialData ? "Edit size" : "Create size",
     description: initialData
       ? "Edit an existing size"
-      : "Create a band new size",
+      : "Create a brand new size",
     toastMessage: initialData
       ? "Your size has been updated"
       : "A new Size has been created successfully",

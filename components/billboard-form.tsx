@@ -45,7 +45,7 @@ function BillboardForm({ initialData }: Props) {
     title: initialData ? "Edit billboard" : "Create billboard",
     description: initialData
       ? "Edit an existing billboard"
-      : "Create a band new billboard",
+      : "Create a brand new billboard",
     toastMessage: initialData
       ? "Your billboard has been updated"
       : "A new Billboard has been created successfully",
