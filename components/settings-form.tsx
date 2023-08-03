@@ -24,6 +24,7 @@ import { useParams, useRouter } from "next/navigation";
 import AlertModal from "./modals/alert-modal";
 import ApiAlert from "@/components/ui/api-alert";
 import { useOrigin } from "@/hooks/use-origin";
+import ImageUploader from "./ui/image-uploader";
 
 interface Props {
   initialData: Store;
@@ -31,6 +32,7 @@ interface Props {
 
 const formSchema = z.object({
   name: z.string().min(3),
+  logoUrl: z.string().default("").optional(),
 });
 
 type SettingsFormValues = z.infer<typeof formSchema>;
@@ -101,6 +103,24 @@ function SettingsForm({ initialData }: Props) {
           onSubmit={form.handleSubmit(onSubmit)}
           className="space-y-8 w-full"
         >
+          <FormField
+            control={form.control}
+            name="logoUrl"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Store logo</FormLabel>
+                <FormControl>
+                  <ImageUploader
+                    value={field.value ? [field.value] : []}
+                    disabled={isLoading}
+                    onChange={(url) => field.onChange(url)}
+                    onRemove={() => field.onChange("")}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <div className="grid grid-cols-3 gap-8">
             <FormField
               control={form.control}

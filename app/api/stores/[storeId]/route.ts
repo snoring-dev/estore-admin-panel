@@ -2,6 +2,28 @@ import prismadb from "@/lib/prisma.db";
 import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 
+export async function GET(
+  _req: Request,
+  { params }: { params: { storeId: string } }
+) {
+  try {
+    if (!params.storeId) {
+      return new NextResponse("StoreId is required", { status: 401 });
+    }
+
+    const store = await prismadb.store.findFirst({
+      where: {
+        id: params.storeId,
+      },
+    });
+
+    return NextResponse.json(store);
+  } catch (e: any) {
+    console.log("[STORE_GET]", e);
+    return new NextResponse("Internal Server Error", { status: 500 });
+  }
+}
+
 export async function PATCH(
   req: Request,
   { params }: { params: { storeId: string } }
@@ -9,7 +31,7 @@ export async function PATCH(
   try {
     const { userId } = auth();
     const body = await req.json();
-    const { name } = body;
+    const { name, logoUrl = undefined } = body;
 
     if (!userId) {
       return new NextResponse("Unauthorized route", { status: 401 });
@@ -24,7 +46,7 @@ export async function PATCH(
     }
 
     const store = await prismadb.store.updateMany({
-      data: { name },
+      data: { name, logoUrl },
       where: {
         userId,
         id: params.storeId,
