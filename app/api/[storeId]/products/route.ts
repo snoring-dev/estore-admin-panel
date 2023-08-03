@@ -113,6 +113,7 @@ export async function GET(
     const colorId = searchParams.get("colorId") || undefined;
     const sizeId = searchParams.get("sizeId") || undefined;
     const isFeatured = searchParams.get("isFeatured");
+    const excludeId = searchParams.get("excludeId") || undefined;
 
     if (!params.storeId) {
       return new NextResponse("StoreId is required", { status: 401 });
@@ -126,6 +127,9 @@ export async function GET(
         colorId,
         isFeatured: isFeatured ? true : undefined,
         isArchived: false,
+        id: {
+          not: excludeId,
+        },
       },
       include: {
         images: true,
