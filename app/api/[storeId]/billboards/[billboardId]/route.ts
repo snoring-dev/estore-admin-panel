@@ -72,6 +72,7 @@ export async function PATCH(
       data: {
         label: body.label,
         imageUrl: body.imageUrl,
+        textColor: body.textColor || "#000000",
       },
       where: {
         id: params.billboardId,

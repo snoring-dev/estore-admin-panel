@@ -31,6 +31,7 @@ interface Props {
 const formSchema = z.object({
   label: z.string().min(3),
   imageUrl: z.string().min(3),
+  textColor: z.string().min(4).regex(/^#/, "Please enter a valid HEX color"),
 });
 
 type BillboardFormValues = z.infer<typeof formSchema>;
@@ -54,7 +55,11 @@ function BillboardForm({ initialData }: Props) {
 
   const form = useForm<BillboardFormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: initialData || { label: "", imageUrl: "" },
+    defaultValues: initialData || {
+      label: "",
+      imageUrl: "",
+      textColor: "#000000",
+    },
   });
 
   const onSubmit = async (data: BillboardFormValues) => {
@@ -154,6 +159,32 @@ function BillboardForm({ initialData }: Props) {
                       placeholder="Billboard label"
                       {...field}
                     />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="textColor"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Text color</FormLabel>
+                  <FormControl>
+                    <div className="flex flex-row gap-2 justify-center items-center">
+                      <Input
+                        disabled={isLoading}
+                        placeholder="Color value"
+                        {...field}
+                      />
+                      <div
+                        className={`border border-gray-300 bg-transparent w-[44px] h-[39px]`}
+                        style={{
+                          backgroundColor: field.value,
+                          borderRadius: "100px",
+                        }}
+                      />
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

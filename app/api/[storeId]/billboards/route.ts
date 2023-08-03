@@ -48,6 +48,7 @@ export async function POST(
       data: {
         label: body.label,
         imageUrl: body.imageUrl,
+        textColor: body.textColor || "#000000",
         storeId: params.storeId,
       },
     });

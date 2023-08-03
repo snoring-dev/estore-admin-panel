@@ -22,6 +22,7 @@ async function BillboardPage({ params }: Props) {
           data={billboards.map((bl) => ({
             id: bl.id,
             label: bl.label,
+            textColor: bl.textColor,
             createdAt: format(bl.createdAt, "MMMM do, yyyy"),
           }))}
         />
