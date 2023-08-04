@@ -13,7 +13,7 @@ export async function OPTIONS() {
   return NextResponse.json({}, { headers: corsHeaders });
 }
 
-export async function POST(req: Request, params: { storeId: string }) {
+export async function POST(req: Request, { params }: { params: { storeId: string } }) {
   const { productIds } = await req.json();
 
   if (!productIds || productIds.length === 0) {

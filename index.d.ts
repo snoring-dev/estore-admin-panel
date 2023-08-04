@@ -11,6 +11,7 @@ const envVariables = z.object({
   DATABASE_URL: z.string(),
   STRIPE_API_KEY: z.string(),
   FRONTEND_STORE_URL: z.string(),
+  STRIPE_WEBHOOK_KEY: z.string(),
 });
 
 envVariables.parse(process.env);
