@@ -32,6 +32,7 @@ import {
   SelectValue,
 } from "./ui/select";
 import { Checkbox } from "./ui/checkbox";
+import { Textarea } from "./ui/textarea";
 
 interface Props {
   categories: Category[];
@@ -48,6 +49,7 @@ const formSchema = z.object({
   name: z.string().min(1),
   images: z.object({ url: z.string().min(1) }).array(),
   price: z.coerce.number().min(1),
+  shortDescription: z.string().default("").optional(),
   categoryId: z.string().min(1),
   sizeId: z.string().min(1),
   colorId: z.string().min(1),
@@ -80,6 +82,7 @@ function ProductForm({ initialData, categories, sizes, colors }: Props) {
       ? { ...initialData, price: parseFloat(String(initialData.price)) }
       : {
           name: "",
+          shortDescription: "",
           images: [],
           price: 0,
           categoryId: "",
@@ -164,7 +167,9 @@ function ProductForm({ initialData, categories, sizes, colors }: Props) {
                   <ImageUploader
                     value={field.value.map((img) => img.url)}
                     disabled={isLoading}
-                    onChange={(url) => field.onChange([...field.value, { url }])}
+                    onChange={(url) =>
+                      field.onChange([...field.value, { url }])
+                    }
                     onRemove={(url) =>
                       field.onChange([
                         ...field.value.filter((img) => img.url !== url),
@@ -351,6 +356,23 @@ function ProductForm({ initialData, categories, sizes, colors }: Props) {
                       This product will not appear anywhere on the store
                     </FormDescription>
                   </div>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="shortDescription"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Short description</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      disabled={isLoading}
+                      placeholder="Give a short description about the product"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />

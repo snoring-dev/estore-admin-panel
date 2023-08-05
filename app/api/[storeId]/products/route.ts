@@ -18,6 +18,7 @@ export async function POST(
       colorId,
       images,
       price,
+      shortDescription,
     } = body;
 
     if (!userId) {
@@ -87,6 +88,7 @@ export async function POST(
         categoryId,
         colorId,
         sizeId,
+        shortDescription,
         images: {
           createMany: {
             data: [...images.map((img: { url: string }) => img)],
