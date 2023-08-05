@@ -82,23 +82,26 @@ model Color {
 }
 
 model Product {
-  id         String      @id @default(uuid())
-  storeId    String
-  categoryId String
-  sizeId     String
-  colorId    String
-  name       String
-  price      Decimal
-  isFeatured Boolean     @default(false)
-  isArchived Boolean     @default(false)
-  size       Size        @relation(fields: [sizeId], references: [id])
-  color      Color       @relation(fields: [colorId], references: [id])
-  store      Store       @relation("StoreToProduct", fields: [storeId], references: [id])
-  category   Category    @relation("CategoryToProduct", fields: [categoryId], references: [id])
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
-  images     Image[]
-  orderItems OrderItem[]
+  id               String      @id @default(uuid())
+  storeId          String
+  categoryId       String
+  sizeId           String
+  colorId          String
+  name             String
+  shortDescription String      @default("")
+  descriptionFile  String      @default("")
+  price            Decimal
+  isFeatured       Boolean     @default(false)
+  isArchived       Boolean     @default(false)
+  size             Size        @relation(fields: [sizeId], references: [id])
+  color            Color       @relation(fields: [colorId], references: [id])
+  store            Store       @relation("StoreToProduct", fields: [storeId], references: [id])
+  category         Category    @relation("CategoryToProduct", fields: [categoryId], references: [id])
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+  images           Image[]
+  orderItems       OrderItem[]
+  reviews          Review[]
 
   @@index([storeId])
   @@index([categoryId])
@@ -137,5 +140,17 @@ model OrderItem {
   product   Product @relation(fields: [productId], references: [id])
 
   @@index([orderId])
+  @@index([productId])
+}
+
+model Review {
+  id        String  @id @default(uuid())
+  productId String
+  firstName String
+  lastName  String
+  message   String
+  rating    Decimal
+  product   Product @relation(fields: [productId], references: [id])
+
   @@index([productId])
 }
