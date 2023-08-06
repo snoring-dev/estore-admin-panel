@@ -144,13 +144,15 @@ model OrderItem {
 }
 
 model Review {
-  id        String  @id @default(uuid())
+  id        String   @id @default(uuid())
   productId String
   firstName String
   lastName  String
   message   String
   rating    Decimal
-  product   Product @relation(fields: [productId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([productId])
 }
