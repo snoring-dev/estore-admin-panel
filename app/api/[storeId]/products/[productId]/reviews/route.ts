@@ -1,6 +1,16 @@
 import prismadb from "@/lib/prisma.db";
 import { NextResponse } from "next/server";
 
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-type, Authorization",
+};
+
+export async function OPTIONS() {
+  return NextResponse.json({}, { headers: corsHeaders });
+}
+
 export async function GET(
   _req: Request,
   { params }: { params: { productId: string } }
@@ -61,11 +71,11 @@ export async function POST(
       });
     }
 
-    if (!rating) {
-      return new NextResponse("Missing field 'rating' for product creation", {
-        status: 400,
-      });
-    }
+    // if (!rating) {
+    //   return new NextResponse("Missing field 'rating' for product creation", {
+    //     status: 400,
+    //   });
+    // }
 
     const storeByUserId = await prismadb.store.findFirst({
       where: {
@@ -82,12 +92,12 @@ export async function POST(
         firstName,
         lastName,
         message,
-        rating,
+        rating: body.rating || 3,
         productId: params.productId,
       },
     });
 
-    return NextResponse.json(review);
+    return NextResponse.json(review, { headers: corsHeaders });
   } catch (e: any) {
     console.log("[REVIEWS_POST]", e);
     return new NextResponse("Internal Server Error", { status: 500 });
