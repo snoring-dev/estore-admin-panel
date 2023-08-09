@@ -33,12 +33,41 @@ export async function POST(req: Request) {
     .join(", ");
 
   if (event.type === "checkout.session.completed") {
+    // look if we have a client already
+    let client = await prismadb.client.findFirst({
+      where: {
+        email: session.customer_details?.email ?? "",
+      },
+    });
+    
+    // create a new client if not!
+    if (!client) {
+      client = await prismadb.client.create({
+        data: {
+          email: session.customer_details?.email ?? "",
+          phone: session.customer_details?.phone ?? "",
+          name: session.customer_details?.name ?? "",
+          address: {
+            create: {
+              line1: address?.line1 ?? "",
+              line2: address?.line2 ?? "",
+              city: address?.city ?? "",
+              state: address?.state ?? "",
+              postalCode: address?.postal_code ?? "",
+              country: address?.country ?? "",
+            },
+          },
+        },
+      });
+    }
+
     const order = await prismadb.order.update({
       where: { id: session?.metadata?.orderId },
       data: {
         isPaid: true,
         address: addressLine,
         phone: session.customer_details?.phone || "",
+        clientId: client.id,
       },
       include: {
         orderItems: true,

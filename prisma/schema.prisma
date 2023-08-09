@@ -129,7 +129,7 @@ model Order {
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
   client     Client      @relation(fields: [clientId], references: [id])
-  clientId   Int
+  clientId   Int         @default(0)
 
   @@index([storeId])
   @@index([clientId])
@@ -165,8 +165,8 @@ model Client {
   email   String   @default("")
   name    String   @default("")
   phone   String   @default("")
-  Address Address?
-  orders   Order[]
+  address Address?
+  orders  Order[]
 }
 
 model Address {
