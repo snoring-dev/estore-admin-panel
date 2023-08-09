@@ -128,8 +128,11 @@ model Order {
   address    String      @default("")
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
+  client     Client      @relation(fields: [clientId], references: [id])
+  clientId   Int
 
   @@index([storeId])
+  @@index([clientId])
 }
 
 model OrderItem {
@@ -155,4 +158,27 @@ model Review {
   updatedAt DateTime @updatedAt
 
   @@index([productId])
+}
+
+model Client {
+  id      Int      @id @default(autoincrement())
+  email   String   @default("")
+  name    String   @default("")
+  phone   String   @default("")
+  Address Address?
+  orders   Order[]
+}
+
+model Address {
+  id         Int    @id @default(autoincrement())
+  city       String @default("")
+  country    String @default("")
+  line1      String @default("")
+  line2      String @default("")
+  postalCode String @default("")
+  state      String @default("")
+  clientId   Int    @unique
+  client     Client @relation(fields: [clientId], references: [id])
+
+  @@index([clientId])
 }
