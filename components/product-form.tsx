@@ -55,6 +55,7 @@ const formSchema = z.object({
   colorId: z.string().min(1),
   isFeatured: z.boolean().default(false).optional(),
   isArchived: z.boolean().default(false).optional(),
+  inventory: z.number().default(0),
 });
 
 type ProductFormValues = z.infer<typeof formSchema>;
@@ -90,6 +91,7 @@ function ProductForm({ initialData, categories, sizes, colors }: Props) {
           colorId: "",
           isFeatured: false,
           isArchived: false,
+          inventory: 0,
         },
   });
 
@@ -210,6 +212,24 @@ function ProductForm({ initialData, categories, sizes, colors }: Props) {
                       type="number"
                       disabled={isLoading}
                       placeholder="10.00"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="inventory"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Inventory (items in stock)</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      disabled={isLoading}
+                      placeholder="10"
                       {...field}
                     />
                   </FormControl>

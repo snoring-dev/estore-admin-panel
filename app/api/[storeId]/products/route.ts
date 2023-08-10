@@ -19,6 +19,7 @@ export async function POST(
       images,
       price,
       shortDescription,
+      inventory = 0,
     } = body;
 
     if (!userId) {
@@ -83,6 +84,7 @@ export async function POST(
       data: {
         name,
         price,
+        inventory,
         isFeatured,
         isArchived,
         categoryId,

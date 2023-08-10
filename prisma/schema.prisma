@@ -91,6 +91,7 @@ model Product {
   shortDescription String      @default("") @db.Text
   descriptionFile  String      @default("")
   price            Decimal
+  inventory        Int         @default(0)
   isFeatured       Boolean     @default(false)
   isArchived       Boolean     @default(false)
   size             Size        @relation(fields: [sizeId], references: [id])

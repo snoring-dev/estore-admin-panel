@@ -39,7 +39,7 @@ export async function POST(req: Request) {
         email: session.customer_details?.email ?? "",
       },
     });
-    
+
     // create a new client if not!
     if (!client) {
       client = await prismadb.client.create({
@@ -74,9 +74,36 @@ export async function POST(req: Request) {
       },
     });
 
-    /*
-     * @TODO: decrease products quantity/stock using orderItems
-     */
+    const productsIds = order.orderItems.map((it) => it.productId);
+
+    // update inventory
+    await prismadb.product.updateMany({
+      where: {
+        id: {
+          in: productsIds,
+        },
+      },
+      data: {
+        inventory: {
+          decrement: 1,
+        },
+      },
+    });
+
+    // archive unavailable products
+    await prismadb.product.updateMany({
+      where: {
+        id: {
+          in: productsIds,
+        },
+        inventory: {
+          lte: 0,
+        },
+      },
+      data: {
+        isArchived: true,
+      },
+    });
   }
 
   return new NextResponse(null, { status: 200 });
