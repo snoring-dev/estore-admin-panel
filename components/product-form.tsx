@@ -33,6 +33,7 @@ import {
 } from "./ui/select";
 import { Checkbox } from "./ui/checkbox";
 import { Textarea } from "./ui/textarea";
+import MultiSelect from "./multi-select";
 
 interface Props {
   categories: Category[];
@@ -51,11 +52,12 @@ const formSchema = z.object({
   price: z.coerce.number().min(1),
   shortDescription: z.string().default("").optional(),
   categoryId: z.string().min(1),
-  sizeId: z.string().min(1),
+  // sizeId: z.string().min(1),
+  sizes: z.string(),
   colorId: z.string().min(1),
   isFeatured: z.boolean().default(false).optional(),
   isArchived: z.boolean().default(false).optional(),
-  inventory: z.number().default(0),
+  inventory: z.coerce.number().default(0),
 });
 
 type ProductFormValues = z.infer<typeof formSchema>;
@@ -87,7 +89,7 @@ function ProductForm({ initialData, categories, sizes, colors }: Props) {
           images: [],
           price: 0,
           categoryId: "",
-          sizeId: "",
+          sizes: "",
           colorId: "",
           isFeatured: false,
           isArchived: false,
@@ -96,24 +98,25 @@ function ProductForm({ initialData, categories, sizes, colors }: Props) {
   });
 
   const onSubmit = async (data: ProductFormValues) => {
-    try {
-      setIsLoading(true);
-      const route = `/api/${params.storeId}/products`;
+    console.log('DATA =>', data);
+    // try {
+    //   setIsLoading(true);
+    //   const route = `/api/${params.storeId}/products`;
 
-      if (initialData) {
-        await axios.patch(`${route}/${params.productId}`, data);
-      } else {
-        await axios.post(route, data);
-      }
+    //   if (initialData) {
+    //     await axios.patch(`${route}/${params.productId}`, data);
+    //   } else {
+    //     await axios.post(route, data);
+    //   }
 
-      router.refresh();
-      toast.success(labels.toastMessage);
-      router.push(route.replace("/api", ""));
-    } catch (e) {
-      toast.error("Something went wrong");
-    } finally {
-      setIsLoading(false);
-    }
+    //   router.refresh();
+    //   toast.success(labels.toastMessage);
+    //   router.push(route.replace("/api", ""));
+    // } catch (e) {
+    //   toast.error("Something went wrong");
+    // } finally {
+    //   setIsLoading(false);
+    // }
   };
 
   const onDelete = async () => {
@@ -271,11 +274,24 @@ function ProductForm({ initialData, categories, sizes, colors }: Props) {
             />
             <FormField
               control={form.control}
-              name="sizeId"
+              name="sizes"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Size</FormLabel>
-                  <Select
+                  <FormLabel>Sizes</FormLabel>
+                  <MultiSelect
+                    name="sizes"
+                    size="normal"
+                    placeholder="Select sizes"
+                    value={[...field.value.split(',')]}
+                    valueChange={(v) =>
+                      field.onChange(v.filter((i) => i !== "").join(','))
+                    }
+                    optionList={sizes.map((sz) => ({
+                      label: sz.name,
+                      value: sz.id,
+                    }))}
+                  />
+                  {/* <Select
                     disabled={isLoading}
                     onValueChange={field.onChange}
                     value={field.value}
@@ -296,7 +312,7 @@ function ProductForm({ initialData, categories, sizes, colors }: Props) {
                         </SelectItem>
                       ))}
                     </SelectContent>
-                  </Select>
+                  </Select> */}
                   <FormMessage />
                 </FormItem>
               )}
