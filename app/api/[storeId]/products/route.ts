@@ -88,8 +88,12 @@ export async function POST(
         isFeatured,
         isArchived,
         categoryId,
-        colorId,
-        sizeId,
+        colors: {
+          connect: [{ id: colorId }],
+        },
+        sizes: {
+          connect: [{ id: sizeId }],
+        },
         shortDescription,
         images: {
           createMany: {
@@ -127,8 +131,16 @@ export async function GET(
       where: {
         storeId: params.storeId,
         categoryId,
-        sizeId,
-        colorId,
+        colors: {
+          some: {
+            id: colorId,
+          },
+        },
+        sizes: {
+          some: {
+            id: sizeId,
+          },
+        },
         isFeatured: isFeatured ? true : undefined,
         isArchived: false,
         id: {
@@ -138,8 +150,8 @@ export async function GET(
       include: {
         images: true,
         category: true,
-        color: true,
-        size: true,
+        colors: true,
+        sizes: true,
         reviews: true,
       },
       orderBy: {

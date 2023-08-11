@@ -13,8 +13,8 @@ async function ProductsPage({ params }: Props) {
     where: { storeId: params.storeId },
     include: {
       category: true,
-      size: true,
-      color: true,
+      sizes: true,
+      colors: true,
     },
     orderBy: {
       createdAt: "desc",
@@ -31,8 +31,8 @@ async function ProductsPage({ params }: Props) {
             isFeatured: p.isFeatured,
             isArchived: p.isArchived,
             category: p.category.name,
-            size: p.size.name,
-            color: p.color.value,
+            size: p.sizes[0]?.name ?? '',
+            color: p.colors[0]?.value ?? '',
             createdAt: format(p.createdAt, "MMMM do, yyyy"),
             price: priceFormatter.format(p.price.toNumber()),
           }))}
