@@ -185,6 +185,13 @@ export async function DELETE(
       return new NextResponse("Unauthorized Action", { status: 401 });
     }
 
+    // delete all related reviews before
+    await prismadb.review.deleteMany({
+      where: {
+        productId: params.productId,
+      },
+    });
+
     const product = await prismadb.product.deleteMany({
       where: {
         id: params.productId,
