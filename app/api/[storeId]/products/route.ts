@@ -14,8 +14,8 @@ export async function POST(
       isFeatured,
       isArchived,
       categoryId,
-      sizeId,
-      colorId,
+      sizes,
+      colors,
       images,
       price,
       shortDescription,
@@ -57,17 +57,21 @@ export async function POST(
       );
     }
 
-    if (!sizeId) {
-      return new NextResponse("Missing field 'sizeId' for product creation", {
-        status: 400,
-      });
-    }
+    const sizesCollection = await prismadb.size.findMany({
+      where: {
+        id: {
+          in: sizes.map((sz: Record<string, string | number>) => sz.value),
+        },
+      },
+    });
 
-    if (!colorId) {
-      return new NextResponse("Missing field 'colorId' for product creation", {
-        status: 400,
-      });
-    }
+    const colorsCollection = await prismadb.color.findMany({
+      where: {
+        id: {
+          in: colors.map((clr: Record<string, string | number>) => clr.value),
+        },
+      },
+    });
 
     const storeByUserId = await prismadb.store.findFirst({
       where: {
@@ -89,10 +93,10 @@ export async function POST(
         isArchived,
         categoryId,
         colors: {
-          connect: [{ id: colorId }],
+          connect: colorsCollection,
         },
         sizes: {
-          connect: [{ id: sizeId }],
+          connect: sizesCollection,
         },
         shortDescription,
         images: {
