@@ -5,7 +5,7 @@ import FormSelectListItem, { SelectListItemProps } from "./select-list-item";
 export type SelectListProps = {
   optionList: SelectListItemProps[];
   activeItem?: SelectListItemProps;
-  onSelect?: (label: string) => void;
+  onSelect?: (label: string, value: string | number) => void;
 };
 
 export default function SelectList(props: SelectListProps) {
@@ -15,9 +15,10 @@ export default function SelectList(props: SelectListProps) {
         <FormSelectListItem
           key={option.label}
           {...option}
-          active={option === props.activeItem}
+          active={option.value === props.activeItem?.value}
           hasActive={!!props.activeItem}
           onClick={props.onSelect}
+          selected={option.value === props.activeItem?.value}
         />
       ))}
     </ul>

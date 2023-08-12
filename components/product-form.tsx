@@ -52,9 +52,8 @@ const formSchema = z.object({
   price: z.coerce.number().min(1),
   shortDescription: z.string().default("").optional(),
   categoryId: z.string().min(1),
-  // sizeId: z.string().min(1),
-  sizes: z.string(),
-  colorId: z.string().min(1),
+  sizes: z.object({ label: z.string(), value: z.string() }).array(),
+  colors: z.object({ label: z.string(), value: z.string() }).array(),
   isFeatured: z.boolean().default(false).optional(),
   isArchived: z.boolean().default(false).optional(),
   inventory: z.coerce.number().default(0),
@@ -89,8 +88,8 @@ function ProductForm({ initialData, categories, sizes, colors }: Props) {
           images: [],
           price: 0,
           categoryId: "",
-          sizes: "",
-          colorId: "",
+          sizes: [],
+          colors: [],
           isFeatured: false,
           isArchived: false,
           inventory: 0,
@@ -98,7 +97,7 @@ function ProductForm({ initialData, categories, sizes, colors }: Props) {
   });
 
   const onSubmit = async (data: ProductFormValues) => {
-    console.log('DATA =>', data);
+    console.log("DATA =>", data);
     // try {
     //   setIsLoading(true);
     //   const route = `/api/${params.storeId}/products`;
@@ -282,75 +281,38 @@ function ProductForm({ initialData, categories, sizes, colors }: Props) {
                     name="sizes"
                     size="normal"
                     placeholder="Select sizes"
-                    value={[...field.value.split(',')]}
-                    valueChange={(v) =>
-                      field.onChange(v.filter((i) => i !== "").join(','))
-                    }
+                    value={field.value}
+                    valueChange={(v) => {
+                      field.onChange(v.filter((i) => i.label !== ""));
+                    }}
                     optionList={sizes.map((sz) => ({
                       label: sz.name,
                       value: sz.id,
                     }))}
                   />
-                  {/* <Select
-                    disabled={isLoading}
-                    onValueChange={field.onChange}
-                    value={field.value}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue
-                          defaultValue={field.value}
-                          placeholder="select size"
-                        />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {sizes.map((sz) => (
-                        <SelectItem key={sz.id} value={sz.id}>
-                          ({sz.value}) - {sz.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select> */}
                   <FormMessage />
                 </FormItem>
               )}
             />
             <FormField
               control={form.control}
-              name="colorId"
+              name="colors"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Color</FormLabel>
-                  <Select
-                    disabled={isLoading}
-                    onValueChange={field.onChange}
+                  <MultiSelect
+                    name="colors"
+                    size="normal"
+                    placeholder="Select colors"
                     value={field.value}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue
-                          defaultValue={field.value}
-                          placeholder="select color"
-                        />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {colors.map((clr) => (
-                        <SelectItem key={clr.id} value={clr.id}>
-                          <div className="flex flex-row items-center justify-center">
-                            <div
-                              className="w-4 h-4 rounded-xl"
-                              style={{ backgroundColor: clr.value }}
-                            />
-                            <span className="ml-2">{clr.name}</span>
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                    valueChange={(v) => {
+                      field.onChange(v.filter((i) => i.label !== ""));
+                    }}
+                    optionList={colors.map((sz) => ({
+                      label: sz.name,
+                      value: sz.id,
+                    }))}
+                  />
                   <FormMessage />
                 </FormItem>
               )}

@@ -16,7 +16,10 @@ import SelectList from "./components/select-list";
 
 export type MultiSelectOptionItem = {
   label: string;
+  value: string | number;
 };
+
+type SelectItem = { label: string; value: string | number };
 
 export type MultiSelectProps = {
   name: string;
@@ -24,12 +27,12 @@ export type MultiSelectProps = {
   size?: "normal" | "small";
   optionList: MultiSelectOptionItem[];
   placeholder?: string;
-  value?: string[];
-  valueChange?: (newValue: string[]) => void;
+  value?: SelectItem[];
+  valueChange?: (newValue: SelectItem[]) => void;
 };
 
 export default function MultiSelect(props: MultiSelectProps) {
-  const [value, setValue] = useState(props.value || []);
+  const [value, setValue] = useState<SelectItem[]>(props.value || []);
   const [searchTerm, setSearchTerm] = useState("");
   const [activeItem, setActiveItem] = useState<SelectListItemProps>();
   const [extraOptions, setExtraOptions] = useState<SelectListItemProps[]>([]);
@@ -75,7 +78,7 @@ export default function MultiSelect(props: MultiSelectProps) {
       value
         .map((label) =>
           [...props.optionList, ...extraOptions].find(
-            (option) => option.label === label
+            (option) => option.value === label.value
           )
         )
         .filter((option) => !!option) as SelectListItemProps[],
@@ -87,23 +90,24 @@ export default function MultiSelect(props: MultiSelectProps) {
   };
 
   const changeValue = (item?: SelectListItemProps) => {
-    console.log('ITEM =>', item);
     const usedItem = item || activeItem;
     if (usedItem) {
       setSearchTerm("");
-      let newValue: string[] = [];
-      if (value.includes(usedItem.label)) {
-        newValue = value.filter((v) => v !== usedItem.label);
-        if (extraOptions.find((opt) => opt.label === usedItem.label)) {
+      let newValue: SelectItem[] = [];
+      const existingValue = value.find(v => v.value === usedItem.value);
+
+      if (existingValue) {
+        newValue = value.filter((v) => v.value !== usedItem.value);
+        if (extraOptions.find((opt) => opt.value === usedItem.value)) {
           setExtraOptions(
-            extraOptions.filter((v) => v.label !== usedItem.label)
+            extraOptions.filter((v) => v.value !== usedItem.value)
           );
         }
       } else {
-        newValue = [...value, usedItem.label];
+        newValue = [...value, { label: usedItem.label, value: usedItem.value }];
         if (
-          !props.optionList.find((opt) => opt.label === usedItem.label) &&
-          !extraOptions.find((opt) => opt.label === usedItem.label)
+          !props.optionList.find((opt) => opt.value === usedItem.value) &&
+          !extraOptions.find((opt) => opt.value === usedItem.value)
         ) {
           setExtraOptions([...extraOptions, usedItem]);
         }
@@ -134,9 +138,9 @@ export default function MultiSelect(props: MultiSelectProps) {
       inputRef.current?.blur();
     } else if (event.key === "Backspace") {
       if (searchTerm === "") {
-        if (extraOptions.find((opt) => opt.label === value[value.length - 1])) {
+        if (extraOptions.find((opt) => opt.label === value[value.length - 1].label)) {
           setExtraOptions(
-            extraOptions.filter((v) => v.label !== value[value.length - 1])
+            extraOptions.filter((v) => v.label !== value[value.length - 1].label)
           );
         }
         setValue(value.slice(0, value.length - 1));
@@ -144,13 +148,13 @@ export default function MultiSelect(props: MultiSelectProps) {
     }
   };
 
-  const selectItem = (label: string) => {
+  const selectItem = (label: string, value: string | number) => {
     let item = [
       ...props.optionList.map((opt) => ({ ...opt, selected: false })),
       ...extraOptions,
     ].find((opt) => opt.label === label);
     if (!item) {
-      item = { label: searchTerm, selected: false };
+      item = { label: searchTerm, selected: false, value };
     }
     changeValue(item);
   };
@@ -196,17 +200,17 @@ export default function MultiSelect(props: MultiSelectProps) {
         >
           {(mappedValue || []).map((item) => (
             <li
-              key={item.label}
-              className="flex items-center justify-between bg-blue-100 rounded-lg p-2 gap-4 max-w-full"
+              key={item.value}
+              className="flex items-center justify-between bg-black rounded-lg p-2 gap-4 max-w-full"
             >
-              <span className="font-semibold whitespace-nowrap overflow-hidden text-ellipsis">
+              <span className="text-white font-semibold whitespace-nowrap overflow-hidden text-ellipsis">
                 {item.label}
               </span>
               <span
-                className="cursor-pointer"
+                className="text-white cursor-pointer"
                 onClick={() => changeValue(item)}
               >
-                <TimesIcon className="text-opacity-90 text-black text-sm w-2 hover:text-opacity-100" />
+                <TimesIcon className="text-opacity-90 text-sm w-2 hover:text-opacity-100" />
               </span>
             </li>
           ))}
