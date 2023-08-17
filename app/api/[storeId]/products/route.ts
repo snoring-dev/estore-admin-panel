@@ -126,6 +126,7 @@ export async function GET(
     const sizeId = searchParams.get("sizeId") || undefined;
     const isFeatured = searchParams.get("isFeatured");
     const excludeId = searchParams.get("excludeId") || undefined;
+    const take = Number(searchParams.get("take")) || undefined;
 
     if (!params.storeId) {
       return new NextResponse("StoreId is required", { status: 401 });
@@ -161,6 +162,7 @@ export async function GET(
       orderBy: {
         createdAt: "desc",
       },
+      take,
     });
 
     return NextResponse.json(products);
