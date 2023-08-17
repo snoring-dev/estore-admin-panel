@@ -4,6 +4,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import CellAction from "./cell-action";
 
 export type ProductColumn = {
+  id: string;
   name: string;
   isFeatured: boolean;
   isArchived: boolean;
