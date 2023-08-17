@@ -15,7 +15,7 @@ export async function POST(req: Request) {
       signature,
       process.env.STRIPE_WEBHOOK_KEY
     );
-  } catch (e) {
+  } catch (e: any) {
     return new NextResponse(`Webhook Error: ${e.message}`, { status: 400 });
   }
 

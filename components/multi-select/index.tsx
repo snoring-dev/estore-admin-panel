@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import React, {
   ChangeEvent,
@@ -53,10 +53,10 @@ export default function MultiSelect(props: MultiSelectProps) {
       )
       .map((option) => ({
         ...option,
-        selected: value?.includes(option.label) || false,
+        selected: value?.map((v) => v.value).includes(option.value) || false,
       }));
     const tempOptions: SelectListItemProps[] = [
-      { label: searchTerm, selected: false },
+      { label: searchTerm, selected: false, value: searchTerm },
     ];
     if (defaultOptionList.length === 0) {
       setActiveItem(tempOptions[0]);
@@ -94,7 +94,7 @@ export default function MultiSelect(props: MultiSelectProps) {
     if (usedItem) {
       setSearchTerm("");
       let newValue: SelectItem[] = [];
-      const existingValue = value.find(v => v.value === usedItem.value);
+      const existingValue = value.find((v) => v.value === usedItem.value);
 
       if (existingValue) {
         newValue = value.filter((v) => v.value !== usedItem.value);
@@ -138,9 +138,15 @@ export default function MultiSelect(props: MultiSelectProps) {
       inputRef.current?.blur();
     } else if (event.key === "Backspace") {
       if (searchTerm === "") {
-        if (extraOptions.find((opt) => opt.label === value[value.length - 1].label)) {
+        if (
+          extraOptions.find(
+            (opt) => opt.label === value[value.length - 1].label
+          )
+        ) {
           setExtraOptions(
-            extraOptions.filter((v) => v.label !== value[value.length - 1].label)
+            extraOptions.filter(
+              (v) => v.label !== value[value.length - 1].label
+            )
           );
         }
         setValue(value.slice(0, value.length - 1));
