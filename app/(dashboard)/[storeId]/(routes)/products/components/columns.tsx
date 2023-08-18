@@ -2,6 +2,8 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import CellAction from "./cell-action";
+import Image from "next/image";
+import { Badge } from "@/components/ui/badge";
 
 export type ProductColumn = {
   id: string;
@@ -13,20 +15,35 @@ export type ProductColumn = {
   color: string;
   createdAt: string;
   price: string;
+  imageUrl?: string;
+  inventory?: number;
 };
 
 export const columns: ColumnDef<ProductColumn>[] = [
   {
     accessorKey: "name",
     header: "Name",
-  },
-  {
-    accessorKey: "isArchived",
-    header: "Archived",
-  },
-  {
-    accessorKey: "isFeatured",
-    header: "Featured",
+    cell: ({ row }) => (
+      <div className="flex flex-col gap-2 items-start">
+        {row.original.imageUrl && (
+          <div className="relative h-24 w-24 rounded-md overflow-hidden">
+            <Image
+              fill
+              src={row.original.imageUrl}
+              alt={row.original.name}
+              className="object-cover object-center"
+            />
+          </div>
+        )}
+        <div className="font-semibold flex space-x-2">
+          <span>{row.original.name}</span>
+          {row.original.isFeatured && <Badge variant={"outline"}>Featured</Badge>}
+        </div>
+        <div className="text-xs uppercase">
+          Items in stock: {row.original.inventory ?? 0}
+        </div>
+      </div>
+    ),
   },
   {
     accessorKey: "price",

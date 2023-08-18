@@ -3319,6 +3319,11 @@ react-resize-detector@^8.0.4:
   dependencies:
     lodash "^4.17.21"
 
+react-simple-wysiwyg@^2.2.5:
+  version "2.2.5"
+  resolved "https://registry.yarnpkg.com/react-simple-wysiwyg/-/react-simple-wysiwyg-2.2.5.tgz#804881576ef81e9e685a49002ba6f4ba7045e81c"
+  integrity sha512-cNut1O8wAavVJKi3cobLlM3VIjiJG4clBSJDEz4Rgc6V+ww7bmjp8KGTuJJw79ZAsJDYGfN1ic/80u2et8GZZg==
+
 react-smooth@^2.0.2:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/react-smooth/-/react-smooth-2.0.3.tgz#2845fa8f22914f2e4445856d5688fb8a7d72f3ae"

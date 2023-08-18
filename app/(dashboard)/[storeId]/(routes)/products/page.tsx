@@ -15,6 +15,7 @@ async function ProductsPage({ params }: Props) {
       category: true,
       sizes: true,
       colors: true,
+      images: true,
     },
     orderBy: {
       createdAt: "desc",
@@ -35,6 +36,8 @@ async function ProductsPage({ params }: Props) {
             color: p.colors[0]?.value ?? '',
             createdAt: format(p.createdAt, "MMMM do, yyyy"),
             price: priceFormatter.format(p.price.toNumber()),
+            imageUrl: p.images?.[0].url ?? undefined,
+            inventory: p?.inventory ?? 0,
           }))}
         />
       </div>

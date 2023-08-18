@@ -7,6 +7,7 @@ import { Category, Color, Image, Product, Size } from "@prisma/client";
 import { Trash } from "lucide-react";
 import { toast } from "react-hot-toast";
 import axios from "axios";
+import Editor from "react-simple-wysiwyg";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Heading } from "@/components/ui/heading";
 import { Button } from "@/components/ui/button";
@@ -363,10 +364,15 @@ function ProductForm({ initialData, categories, sizes, colors }: Props) {
                 <FormItem>
                   <FormLabel>Short description</FormLabel>
                   <FormControl>
-                    <Textarea
+                    {/* <Textarea
                       disabled={isLoading}
                       placeholder="Give a short description about the product"
                       {...field}
+                    /> */}
+                    <Editor
+                      disabled={isLoading}
+                      value={field.value}
+                      onChange={field.onChange}
                     />
                   </FormControl>
                   <FormMessage />
