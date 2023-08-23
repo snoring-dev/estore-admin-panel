@@ -32,7 +32,7 @@ export type MultiSelectProps = {
 };
 
 export default function MultiSelect(props: MultiSelectProps) {
-  const [value, setValue] = useState<SelectItem[]>(props.value || []);
+  const [value, setValue] = useState<SelectItem[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [activeItem, setActiveItem] = useState<SelectListItemProps>();
   const [extraOptions, setExtraOptions] = useState<SelectListItemProps[]>([]);
@@ -75,7 +75,7 @@ export default function MultiSelect(props: MultiSelectProps) {
 
   const mappedValue: SelectListItemProps[] = useMemo(
     () =>
-      value
+      [...value]
         .map((label) =>
           [...props.optionList, ...extraOptions].find(
             (option) => option.value === label.value

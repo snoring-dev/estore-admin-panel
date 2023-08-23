@@ -33,23 +33,28 @@ import {
   SelectValue,
 } from "./ui/select";
 import { Checkbox } from "./ui/checkbox";
-import { Textarea } from "./ui/textarea";
 import MultiSelect from "./multi-select";
+import ReactSelect from "react-select";
 
 interface Props {
   categories: Category[];
   sizes: Size[];
   colors: Color[];
   initialData:
-    | (Product & {
+    | (Omit<Product, "price" | "createdAt" | "updatedAt"> & {
         images: Image[];
+        sizes: Size[];
+        colors: Color[];
+        price: number;
       })
     | null;
 }
 
 const formSchema = z.object({
   name: z.string().min(1),
-  images: z.object({ url: z.string().min(1) }).array(),
+  images: z
+    .object({ url: z.string().min(1), isMain: z.boolean().default(false) })
+    .array(),
   price: z.coerce.number().min(1),
   shortDescription: z.string().default("").optional(),
   categoryId: z.string().min(1),
@@ -82,7 +87,7 @@ function ProductForm({ initialData, categories, sizes, colors }: Props) {
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: initialData
-      ? { ...initialData, price: parseFloat(String(initialData.price)) }
+      ? { ...initialData }
       : {
           name: "",
           shortDescription: "",
@@ -98,24 +103,25 @@ function ProductForm({ initialData, categories, sizes, colors }: Props) {
   });
 
   const onSubmit = async (data: ProductFormValues) => {
-    try {
-      setIsLoading(true);
-      const route = `/api/${params.storeId}/products`;
+    console.log("DATA =>", data);
+    // try {
+    //   setIsLoading(true);
+    //   const route = `/api/${params.storeId}/products`;
 
-      if (initialData) {
-        await axios.patch(`${route}/${params.productId}`, data);
-      } else {
-        await axios.post(route, data);
-      }
+    //   if (initialData) {
+    //     await axios.patch(`${route}/${params.productId}`, data);
+    //   } else {
+    //     await axios.post(route, data);
+    //   }
 
-      router.refresh();
-      toast.success(labels.toastMessage);
-      router.push(route.replace("/api", ""));
-    } catch (e) {
-      toast.error("Something went wrong");
-    } finally {
-      setIsLoading(false);
-    }
+    //   router.refresh();
+    //   toast.success(labels.toastMessage);
+    //   router.push(route.replace("/api", ""));
+    // } catch (e) {
+    //   toast.error("Something went wrong");
+    // } finally {
+    //   setIsLoading(false);
+    // }
   };
 
   const onDelete = async () => {
@@ -172,13 +178,23 @@ function ProductForm({ initialData, categories, sizes, colors }: Props) {
                     value={field.value.map((img) => img.url)}
                     disabled={isLoading}
                     onChange={(url) =>
-                      field.onChange([...field.value, { url }])
+                      field.onChange([...field.value, { url, isMain: false }])
                     }
                     onRemove={(url) =>
                       field.onChange([
                         ...field.value.filter((img) => img.url !== url),
                       ])
                     }
+                    onImageSelected={(url) => {
+                      const images = [...field.value].map((im) => {
+                        if (im.url === url) {
+                          return { ...im, isMain: true };
+                        }
+                        return { ...im, isMain: false };
+                      });
+                      field.onChange(images);
+                    }}
+                    selectedImageUrl={field.value.find((im) => im.isMain)?.url}
                   />
                 </FormControl>
                 <FormMessage />
@@ -277,18 +293,27 @@ function ProductForm({ initialData, categories, sizes, colors }: Props) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Sizes</FormLabel>
-                  <MultiSelect
-                    name="sizes"
-                    size="normal"
-                    placeholder="Select sizes"
-                    value={field.value}
-                    valueChange={(v) => {
-                      field.onChange(v.filter((i) => i.label !== ""));
+                  <ReactSelect
+                    styles={{
+                      control: (base, _state) => ({
+                        ...base,
+                        borderColor: "rgb(226, 232, 240)",
+                        padding: "2px",
+                        borderRadius: "6px",
+                      }),
                     }}
-                    optionList={sizes.map((sz) => ({
+                    value={field.value.map((v: any) => ({
+                      label: v.name,
+                      value: v.value,
+                    }))}
+                    options={sizes.map((sz) => ({
                       label: sz.name,
                       value: sz.id,
                     }))}
+                    onChange={(v) => {
+                      field.onChange(v.filter((i) => i.label !== ""));
+                    }}
+                    isMulti
                   />
                   <FormMessage />
                 </FormItem>
@@ -299,19 +324,28 @@ function ProductForm({ initialData, categories, sizes, colors }: Props) {
               name="colors"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Color</FormLabel>
-                  <MultiSelect
-                    name="colors"
-                    size="normal"
-                    placeholder="Select colors"
-                    value={field.value}
-                    valueChange={(v) => {
+                  <FormLabel>Colors</FormLabel>
+                  <ReactSelect
+                    styles={{
+                      control: (base, _state) => ({
+                        ...base,
+                        borderColor: "rgb(226, 232, 240)",
+                        padding: "2px",
+                        borderRadius: "6px",
+                      }),
+                    }}
+                    value={field.value.map((v: any) => ({
+                      label: v.name,
+                      value: v.value,
+                    }))}
+                    options={colors.map((clr) => ({
+                      label: clr.name,
+                      value: clr.id,
+                    }))}
+                    onChange={(v) => {
                       field.onChange(v.filter((i) => i.label !== ""));
                     }}
-                    optionList={colors.map((sz) => ({
-                      label: sz.name,
-                      value: sz.id,
-                    }))}
+                    isMulti
                   />
                   <FormMessage />
                 </FormItem>
@@ -382,6 +416,13 @@ function ProductForm({ initialData, categories, sizes, colors }: Props) {
           </div>
           <Button disabled={isLoading} type="submit" className="ml-auto">
             {labels.action}
+          </Button>
+          <Button
+            variant="secondary"
+            className="ml-3"
+            onClick={() => router.back()}
+          >
+            Cancel
           </Button>
         </form>
       </Form>
