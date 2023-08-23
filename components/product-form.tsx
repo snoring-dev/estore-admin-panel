@@ -1,9 +1,9 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import * as z from "zod";
-import { Category, Color, Image, Product, Size } from "@prisma/client";
+import { Category, Image, Product } from "@prisma/client";
 import { Trash } from "lucide-react";
 import { toast } from "react-hot-toast";
 import axios from "axios";
@@ -33,19 +33,26 @@ import {
   SelectValue,
 } from "./ui/select";
 import { Checkbox } from "./ui/checkbox";
-import MultiSelect from "./multi-select";
 import ReactSelect from "react-select";
+
+type OptionItem = {
+  label: string;
+  value: string;
+};
 
 interface Props {
   categories: Category[];
-  sizes: Size[];
-  colors: Color[];
+  sizes: OptionItem[];
+  colors: OptionItem[];
   initialData:
-    | (Omit<Product, "price" | "createdAt" | "updatedAt"> & {
+    | (Omit<
+        Product,
+        "price" | "createdAt" | "updatedAt" | "sizes" | "colors"
+      > & {
         images: Image[];
-        sizes: Size[];
-        colors: Color[];
+        colors: OptionItem[];
         price: number;
+        sizes: OptionItem[];
       })
     | null;
 }
@@ -70,6 +77,7 @@ type ProductFormValues = z.infer<typeof formSchema>;
 function ProductForm({ initialData, categories, sizes, colors }: Props) {
   const params = useParams();
   const router = useRouter();
+  const [isMounted, setIsMounted] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -138,6 +146,14 @@ function ProductForm({ initialData, categories, sizes, colors }: Props) {
       setIsOpen(false);
     }
   };
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) {
+    return null;
+  }
 
   return (
     <>
@@ -302,14 +318,8 @@ function ProductForm({ initialData, categories, sizes, colors }: Props) {
                         borderRadius: "6px",
                       }),
                     }}
-                    value={field.value.map((v: any) => ({
-                      label: v.name,
-                      value: v.value,
-                    }))}
-                    options={sizes.map((sz) => ({
-                      label: sz.name,
-                      value: sz.id,
-                    }))}
+                    defaultValue={field.value}
+                    options={sizes}
                     onChange={(v) => {
                       field.onChange(v.filter((i) => i.label !== ""));
                     }}
@@ -326,6 +336,7 @@ function ProductForm({ initialData, categories, sizes, colors }: Props) {
                 <FormItem>
                   <FormLabel>Colors</FormLabel>
                   <ReactSelect
+                    name="colors"
                     styles={{
                       control: (base, _state) => ({
                         ...base,
@@ -334,14 +345,8 @@ function ProductForm({ initialData, categories, sizes, colors }: Props) {
                         borderRadius: "6px",
                       }),
                     }}
-                    value={field.value.map((v: any) => ({
-                      label: v.name,
-                      value: v.value,
-                    }))}
-                    options={colors.map((clr) => ({
-                      label: clr.name,
-                      value: clr.id,
-                    }))}
+                    defaultValue={field.value}
+                    options={colors}
                     onChange={(v) => {
                       field.onChange(v.filter((i) => i.label !== ""));
                     }}
@@ -398,11 +403,6 @@ function ProductForm({ initialData, categories, sizes, colors }: Props) {
                 <FormItem>
                   <FormLabel>Short description</FormLabel>
                   <FormControl>
-                    {/* <Textarea
-                      disabled={isLoading}
-                      placeholder="Give a short description about the product"
-                      {...field}
-                    /> */}
                     <Editor
                       disabled={isLoading}
                       value={field.value}

@@ -34,8 +34,14 @@ async function SingleProductPage({ params }: Props) {
             descriptionFile: product?.descriptionFile ?? "",
             id: product?.id ?? "",
             images: product?.images ?? [],
-            sizes: product?.sizes ?? [],
-            colors: product?.colors ?? [],
+            sizes:
+              product?.sizes.map((sz) => ({ label: sz.name, value: sz.id })) ??
+              [],
+            colors:
+              product?.colors.map((clr) => ({
+                label: clr.name,
+                value: clr.id,
+              })) ?? [],
             inventory: product?.inventory ?? 0,
             isArchived: product?.isArchived ?? false,
             isFeatured: product?.isFeatured ?? false,
@@ -45,8 +51,8 @@ async function SingleProductPage({ params }: Props) {
             storeId: product?.storeId ?? "",
           }}
           categories={categories}
-          colors={colors}
-          sizes={sizes}
+          colors={colors.map(sz => ({ label: sz.name, value: sz.id }))}
+          sizes={sizes.map(sz => ({ label: sz.name, value: sz.id }))}
         />
       </div>
     </div>
