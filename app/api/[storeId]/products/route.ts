@@ -101,7 +101,7 @@ export async function POST(
         shortDescription,
         images: {
           createMany: {
-            data: [...images.map((img: { url: string }) => img)],
+            data: [...images.map((img: { url: string; isMain: boolean }) => img)],
           },
         },
         storeId: params.storeId,

@@ -112,24 +112,24 @@ function ProductForm({ initialData, categories, sizes, colors }: Props) {
 
   const onSubmit = async (data: ProductFormValues) => {
     console.log("DATA =>", data);
-    // try {
-    //   setIsLoading(true);
-    //   const route = `/api/${params.storeId}/products`;
+    try {
+      setIsLoading(true);
+      const route = `/api/${params.storeId}/products`;
 
-    //   if (initialData) {
-    //     await axios.patch(`${route}/${params.productId}`, data);
-    //   } else {
-    //     await axios.post(route, data);
-    //   }
+      if (initialData) {
+        await axios.patch(`${route}/${params.productId}`, data);
+      } else {
+        await axios.post(route, data);
+      }
 
-    //   router.refresh();
-    //   toast.success(labels.toastMessage);
-    //   router.push(route.replace("/api", ""));
-    // } catch (e) {
-    //   toast.error("Something went wrong");
-    // } finally {
-    //   setIsLoading(false);
-    // }
+      router.refresh();
+      toast.success(labels.toastMessage);
+      router.push(route.replace("/api", ""));
+    } catch (e) {
+      toast.error("Something went wrong");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const onDelete = async () => {

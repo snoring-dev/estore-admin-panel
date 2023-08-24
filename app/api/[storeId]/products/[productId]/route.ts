@@ -121,8 +121,6 @@ export async function PATCH(
         isFeatured,
         isArchived,
         categoryId,
-        colors: { deleteMany: {} },
-        sizes: { deleteMany: {} },
         shortDescription,
         images: {
           deleteMany: {},
@@ -138,7 +136,7 @@ export async function PATCH(
       data: {
         images: {
           createMany: {
-            data: [...images.map((img: { url: string }) => img)],
+            data: [...images.map((img: { url: string; isMain: boolean }) => img)],
           },
         },
         colors: {
